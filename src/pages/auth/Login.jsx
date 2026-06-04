@@ -36,7 +36,7 @@ const Login = () => {
           <form onSubmit={handleLogin} className="space-y-6">
             {/* Input Username */}
             <div className="space-y-2">
-              <label className="text-sm font-semibold text-gray-700 ml-1">Username</label>
+              <label className="text-sm font-semibold text-gray-700 ml-1">Nama User</label>
               <div className="relative">
                 <span className="absolute inset-y-0 left-0 pl-4 flex items-center text-gray-400">
                   <User size={18} />
