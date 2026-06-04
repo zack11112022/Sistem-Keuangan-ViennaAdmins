@@ -30,7 +30,7 @@ const Login = () => {
           {/* Judul & Sub-judul */}
           <div className="text-center mb-10">
             <h2 className="text-4xl font-bold text-gray-900 tracking-tight">welcome Back!</h2>
-            <p className="text-gray-400 mt-2 font-medium">Silahkan login untuk mengelola dashboard</p>
+            <p className="text-gray-400 mt-2 font-medium">Silahkan masuk untuk ngelola dashboard</p>
           </div>
 
           <form onSubmit={handleLogin} className="space-y-6">
