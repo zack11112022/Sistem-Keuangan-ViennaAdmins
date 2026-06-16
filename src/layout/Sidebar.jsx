@@ -4,9 +4,10 @@ import { NavLink } from 'react-router-dom';
 
 const Sidebar = () => {
   // Menu disesuaikan dengan gambar: Dashboard dan Sales Raport
-  const menuItems = [
-    { name: 'Dashboard', icon: <LayoutDashboard size={20} />, path: '/dashboard' },
+    const menuItems = [
+    { name: 'Dashboard', icon: <LayoutDashboard size={20} />, path: '/' },
     { name: 'Sales Raport', icon: <FileText size={20} />, path: '/sales-raport' },
+    { name: 'Produk', icon: <FileText size={20} />, path: '/products' },
   ];
 
   return (
