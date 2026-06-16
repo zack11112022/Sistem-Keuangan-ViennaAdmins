@@ -6,7 +6,8 @@ const Sidebar = () => {
   // Menu disesuaikan dengan gambar: Dashboard dan Sales Raport
   const menuItems = [
     { name: 'Dashboard', icon: <LayoutDashboard size={20} />, path: '/dashboard' },
-    { name: 'Sales Raport', icon: <FileText size={20} />, path: '/sales-raport' },
+    { name: 'Laporan Penjualan', icon: <FileText size={20} />, path: '/sales-raport' },
+    { name: 'Produk', icon: <FileText size={20} />, path: '/sales-raport' },
   ];
 
   return (
