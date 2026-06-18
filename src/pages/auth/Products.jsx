@@ -1,4 +1,5 @@
 import React from 'react';
+import { useLocation } from 'react-router-dom';
 
 const productData = [
   { id: 'P001', name: 'Croissant Butter', category: 'Kue', price: '25.000' },
@@ -15,13 +16,31 @@ const productData = [
 ];
 
 export default function Products() {
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const query = searchParams.get('search')?.toLowerCase().trim() || '';
+  const filteredProducts = query.length > 0
+    ? productData.filter((product) =>
+        product.name.toLowerCase().includes(query)
+        || product.category.toLowerCase().includes(query)
+        || product.id.toLowerCase().includes(query)
+      )
+    : productData;
+
   return (
     <div className="w-full">
       <div className="max-w-6xl mx-auto px-6 py-4">
         <div className="border-4 border-[#bff0f6] rounded-xl p-3">
           <div className="p-6 bg-white rounded-xl">
-            <div className="flex justify-between items-center mb-6">
-              <h1 className="text-2xl font-semibold text-gray-800">Manajemen Produk Cafe</h1>
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+              <div>
+                <h1 className="text-2xl font-semibold text-gray-800">Manajemen Produk Cafe</h1>
+                {query && (
+                  <p className="text-sm text-gray-500 mt-1">
+                    Menampilkan hasil pencarian untuk <span className="font-semibold text-gray-700">"{query}"</span>
+                  </p>
+                )}
+              </div>
               <button className="flex items-center gap-2 bg-blue-500 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-600 transition-colors">
                 <span className="inline-block">+</span>
                 Tambah
@@ -40,18 +59,26 @@ export default function Products() {
                   </tr>
                 </thead>
                 <tbody className="text-sm font-medium text-gray-900">
-                  {productData.map((product) => (
-                    <tr key={product.id} className="hover:bg-gray-50 transition-colors">
-                      <td className="py-4 text-gray-700 align-top">{product.id}</td>
-                      <td className="py-4 font-semibold align-top">{product.name}</td>
-                      <td className="py-4 text-gray-700 align-top">{product.category}</td>
-                      <td className="py-4 font-semibold align-top">{product.price}</td>
-                      <td className="py-4 flex items-center gap-4 text-gray-600 justify-end">
-                        <button className="hover:text-blue-600 transition-colors" title="Edit">Edit</button>
-                        <button className="hover:text-red-600 transition-colors" title="Hapus">Hapus</button>
+                  {filteredProducts.length > 0 ? (
+                    filteredProducts.map((product) => (
+                      <tr key={product.id} className="hover:bg-gray-50 transition-colors">
+                        <td className="py-4 text-gray-700 align-top">{product.id}</td>
+                        <td className="py-4 font-semibold align-top">{product.name}</td>
+                        <td className="py-4 text-gray-700 align-top">{product.category}</td>
+                        <td className="py-4 font-semibold align-top">{product.price}</td>
+                        <td className="py-4 flex items-center gap-4 text-gray-600 justify-end">
+                          <button className="hover:text-blue-600 transition-colors" title="Edit">Edit</button>
+                          <button className="hover:text-red-600 transition-colors" title="Hapus">Hapus</button>
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan="5" className="py-10 text-center text-gray-500">
+                        Produk dengan kata kunci "{query}" tidak ditemukan.
                       </td>
                     </tr>
-                  ))}
+                  )}
                 </tbody>
               </table>
             </div>

@@ -1,22 +1,37 @@
-import React from 'react';
-// Perbaikan: Pastikan nama icon sesuai dengan library lucide-react terbaru
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Search, Bell, ChevronDown, User } from 'lucide-react'; 
 
 const Header = () => {
+  const navigate = useNavigate();
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    const trimmedQuery = searchQuery.trim();
+    if (trimmedQuery.length > 0) {
+      navigate(`/products?search=${encodeURIComponent(trimmedQuery)}`);
+      return;
+    }
+    navigate('/products');
+  };
+
   return (
     <header className="h-20 bg-white border-b border-gray-100 flex items-center justify-between px-8 shadow-sm">
       
       {/* 1. Search Bar (Memenuhi Poin 4: Class Tailwind untuk Layouting) */}
-      <div className="relative w-96">
+      <form onSubmit={handleSubmit} className="relative w-96">
         <span className="absolute inset-y-0 left-3 flex items-center text-gray-400">
           <Search size={18} />
         </span>
         <input 
           type="text" 
-          placeholder="Search something..." 
+          value={searchQuery}
+          onChange={(event) => setSearchQuery(event.target.value)}
+          placeholder="Search product..." 
           className="w-full bg-gray-50 border-none rounded-xl py-2 pl-10 pr-4 focus:ring-2 focus:ring-indigo-500 outline-none text-sm transition-all"
         />
-      </div>
+      </form>
 
       {/* 2. User Profile & Notification (Sesuai Desain Dabang) */}
       <div className="flex items-center gap-6">

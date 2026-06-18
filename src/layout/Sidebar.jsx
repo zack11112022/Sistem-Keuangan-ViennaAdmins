@@ -1,8 +1,13 @@
 import React from 'react';
 import { LayoutDashboard, FileText, LogOut } from 'lucide-react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 
 const Sidebar = () => {
+  const navigate = useNavigate();
+  const handleSignOut = () => {
+    localStorage.removeItem('isLoggedIn');
+    navigate('/login');
+  };
   // Menu disesuaikan dengan gambar: Dashboard dan Sales Raport
     const menuItems = [
     { name: 'Dashboard', icon: <LayoutDashboard size={20} />, path: '/' },
@@ -44,7 +49,7 @@ const Sidebar = () => {
 
       {/* Sign Out Section */}
       <div className="p-8">
-        <button className="flex items-center gap-4 text-white/80 hover:text-white transition-colors w-full group">
+        <button type="button" onClick={handleSignOut} className="flex items-center gap-4 text-white/80 hover:text-white transition-colors w-full group">
           <div className="p-1 border border-white/40 rounded group-hover:border-white">
             <LogOut size={18} />
           </div>
