@@ -1,14 +1,34 @@
 import React from 'react';
-import { LayoutDashboard, FileText, LogOut } from 'lucide-react';
-import { NavLink } from 'react-router-dom';
+import { LayoutDashboard, FileText, LogOut, Users, ShoppingCart, Receipt } from 'lucide-react';
+import { NavLink, useNavigate } from 'react-router-dom';
 
 const Sidebar = () => {
-  // Menu disesuaikan dengan gambar: Dashboard dan Sales Raport
-  const menuItems = [
-    { name: 'Dashboard', icon: <LayoutDashboard size={20} />, path: '/dashboard' },
-    { name: 'Laporan Penjualan', icon: <FileText size={20} />, path: '/sales-raport' },
-    { name: 'Produk', icon: <FileText size={20} />, path: '/sales-raport' },
+  const navigate = useNavigate();
+  const role = localStorage.getItem('role');
+
+  const handleSignOut = () => {
+    localStorage.removeItem('isLoggedIn');
+    localStorage.removeItem('id_user');
+    localStorage.removeItem('nama_lengkap');
+    localStorage.removeItem('role');
+    navigate('/login');
+  };
+
+  // Menu admin: kelola dashboard, produk, dan akun karyawan.
+  const adminMenu = [
+    { name: 'Dashboard', icon: <LayoutDashboard size={20} />, path: '/' },
+    { name: 'Sales Raport', icon: <FileText size={20} />, path: '/sales-raport' },
+    { name: 'Produk', icon: <FileText size={20} />, path: '/products' },
+    { name: 'Pengeluaran', icon: <Receipt size={20} />, path: '/pengeluaran' },
+    { name: 'Manajemen Akun', icon: <Users size={20} />, path: '/manajemen-akun' },
   ];
+
+  // Menu karyawan: cuma input pemasukan lewat kasir.
+  const karyawanMenu = [
+    { name: 'Kasir', icon: <ShoppingCart size={20} />, path: '/kasir' },
+  ];
+
+  const menuItems = role === 'Karyawan' ? karyawanMenu : adminMenu;
 
   return (
     <aside className="w-64 bg-[#2D31FA] text-white flex flex-col min-h-screen">
@@ -44,7 +64,7 @@ const Sidebar = () => {
 
       {/* Sign Out Section */}
       <div className="p-8">
-        <button className="flex items-center gap-4 text-white/80 hover:text-white transition-colors w-full group">
+        <button type="button" onClick={handleSignOut} className="flex items-center gap-4 text-white/80 hover:text-white transition-colors w-full group">
           <div className="p-1 border border-white/40 rounded group-hover:border-white">
             <LogOut size={18} />
           </div>
@@ -56,24 +76,3 @@ const Sidebar = () => {
 };
 
 export default Sidebar;
-//import { Link } from "react-router-dom"
-
-//export default function Sidebar() {
-  //return (
-   // <div className="w-64 h-screen bg-gray-900 text-white p-5">
-    //  <h2 className="text-2xl font-bold mb-6">Menu</h2>
-
-     // <nav className="flex flex-col gap-3">
-      //  <Link to="/" className="hover:bg-gray-700 p-2 rounded">
-      //    Dashboard
-      //  </Link>
-       // <Link to="/orders" className="hover:bg-gray-700 p-2 rounded">
-      //    Orders
-       // </Link>
-       // <Link to="/customers" className="hover:bg-gray-700 p-2 rounded">
-      //    Customers
-      //  </Link>
-    //  </nav>
-   // </div>
- // )
-//}

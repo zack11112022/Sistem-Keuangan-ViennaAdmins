@@ -1,15 +1,50 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Lock, User, Eye, EyeOff } from 'lucide-react'; 
+import { Lock, User, Eye, EyeOff } from 'lucide-react';
+import { supabase } from 'src/lib/supabase.js';
 
 const Login = () => {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    localStorage.setItem("isLoggedIn", "true");
-    window.location.href = "/"; 
+    setError('');
+    setLoading(true);
+
+    const { data, error: fetchError } = await supabase
+      .from('akun')
+      .select('id_user, email, nama_lengkap, role')
+      .eq('email', email)
+      .eq('password', password)
+      .maybeSingle();
+
+    setLoading(false);
+
+    if (fetchError) {
+      setError('Terjadi kesalahan saat login: ' + fetchError.message);
+      return;
+    }
+
+    if (!data) {
+      setError('Email atau password salah.');
+      return;
+    }
+
+    localStorage.setItem('isLoggedIn', 'true');
+    localStorage.setItem('id_user', String(data.id_user));
+    localStorage.setItem('nama_lengkap', data.nama_lengkap ?? '');
+    localStorage.setItem('role', data.role ?? '');
+
+    if (data.role === 'Karyawan') {
+      navigate('/kasir');
+    } else {
+      navigate('/');
+    }
   };
 
   return (
@@ -29,21 +64,29 @@ const Login = () => {
 
           {/* Judul & Sub-judul */}
           <div className="text-center mb-10">
-            <h2 className="text-4xl font-bold text-gray-900 tracking-tight">Welcome Back!</h2>
+            <h2 className="text-4xl font-bold text-gray-900 tracking-tight">welcome Back!</h2>
             <p className="text-gray-400 mt-2 font-medium">Silahkan login untuk mengelola dashboard</p>
           </div>
 
+          {error && (
+            <div className="mb-6 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+              {error}
+            </div>
+          )}
+
           <form onSubmit={handleLogin} className="space-y-6">
-            {/* Input Username */}
+            {/* Input Email */}
             <div className="space-y-2">
-              <label className="text-sm font-semibold text-gray-700 ml-1">Nama User</label>
+              <label className="text-sm font-semibold text-gray-700 ml-1">Email</label>
               <div className="relative">
                 <span className="absolute inset-y-0 left-0 pl-4 flex items-center text-gray-400">
                   <User size={18} />
                 </span>
                 <input 
-                  type="text" 
-                  placeholder="Username..." 
+                  type="email" 
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="nama@email.com" 
                   className="w-full pl-12 pr-4 py-4 bg-[#F0F5FA] border-none rounded-2xl outline-none text-gray-600 placeholder-gray-400 focus:ring-2 focus:ring-[#2B7FFF] transition-all"
                   required
                 />
@@ -52,13 +95,15 @@ const Login = () => {
 
             {/* Input Password */}
             <div className="space-y-2">
-              <label className="text-sm font-semibold text-gray-700 ml-1">Password...</label>
+              <label className="text-sm font-semibold text-gray-700 ml-1">Password</label>
               <div className="relative">
                 <span className="absolute inset-y-0 left-0 pl-4 flex items-center text-gray-400">
                   <Lock size={18} />
                 </span>
                 <input 
                   type={showPassword ? "text" : "password"} 
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••" 
                   className="w-full pl-12 pr-12 py-4 bg-[#F0F5FA] border-none rounded-2xl outline-none text-gray-600 placeholder-gray-400 focus:ring-2 focus:ring-[#2B7FFF] transition-all"
                   required
@@ -85,9 +130,10 @@ const Login = () => {
             {/* Tombol Sign In Biru Gacor */}
             <button 
               type="submit" 
-              className="w-full bg-[#2A52E2] hover:bg-blue-700 text-white font-bold py-4 rounded-2xl shadow-lg shadow-blue-200 transition-all active:scale-[0.98] mt-4"
+              disabled={loading}
+              className="w-full bg-[#2A52E2] hover:bg-blue-700 text-white font-bold py-4 rounded-2xl shadow-lg shadow-blue-200 transition-all active:scale-[0.98] mt-4 disabled:opacity-60"
             >
-              Sign in
+              {loading ? 'Memproses...' : 'Sign in'}
             </button>
           </form>
 
@@ -109,124 +155,3 @@ const Login = () => {
 };
 
 export default Login;
-//import { useState } from "react"
-//import { useNavigate } from "react-router-dom"
-//import axios from "axios"
-//import { BsFillExclamationDiamondFill } from "react-icons/bs"
-//import { ImSpinner2 } from "react-icons/im"
-//export default function Login() {
-    /* navigate, state & handleChange*/
-  //  const navigate = useNavigate()
-    //const [loading, setLoading] = useState(false)
-   // const [error, setError] = useState("")
-   // const [dataForm, setDataForm] = useState({
-     //   email: "",
-       // password: "",
-    //})
-
-    //const handleChange = (evt) => {
-      //  const { name, value } = evt.target
-        //setDataForm({
-          //  ...dataForm,
-            //[name]: value,
-       // })
-    //}
-
-
-    /* process form */
-    //const handleSubmit = async (e) => {
-      //  e.preventDefault()
-
-      //  setLoading(true)
-       // setError(false)
-
-        //axios
-            //.post("https://dummyjson.com/user/login", {
-          //      username: dataForm.email,
-          //      password: dataForm.password,
-         //   })
-        //    .then((response) => {
-                // Jika status bukan 200, tampilkan pesan error
-           //     if (response.status !== 200) {
-         //           setError(response.data.message);
-          //          return;
-          //      }
-
-                // Redirect ke dashboard jika login sukses
-          //      navigate("/");
-         //   })
-         //   .catch((err) => {
-         //       if (err.response) {
-         //           setError(err.response.data.message || "An error occurred");
-         //       } else {
-         //           setError(err.message || "An unknown error occurred");
-      //          }
-      //      })
-      //      .finally(() => {
-      //          setLoading(false);
-      //      });
-
- //   }
- //   const errorInfo = error ? (
-     //   <div className="bg-red-200 mb-5 p-5 text-sm font-light text-gray-600 rounded flex items-center">
-     //       <BsFillExclamationDiamondFill className="text-red-600 me-2 text-lg" />
-      //      {error}
-      //  </div>
-   // ) : null
-
-  //  const loadingInfo = loading ? (
-     //   <div className="bg-gray-200 mb-5 p-5 text-sm rounded flex items-center">
-     //       <ImSpinner2 className="me-2 animate-spin" />
-     //       Mohon Tunggu...
-     //   </div>
-   // ) : null
-   // return (
-      //  <div>
-          //  <h2 className="text-2xl font-semibold text-gray-700 mb-6 text-center">
-         //       Welcome Back 👋
-          //  </h2>
-          //  {errorInfo}
-
-          //  {loadingInfo}
-          //</div>  <form onSubmit={handleSubmit}>
-              //  <div className="mb-5">
-              //      <label className="block text-sm font-medium text-gray-700 mb-1">
-               //         Email Address
-                //    </label>
-                //    <input
-                 //       type="text"
-                 //       id="email"
-                //        name="email"
-                 //       className="w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg shadow-sm
-                  //          placeholder-gray-400"
-                   //     placeholder="you@example.com"
-                   //     onChange={handleChange}
-
-               //     />
-              //  </div>
-              //  <div className="mb-6">
-              //      <label className="block text-sm font-medium text-gray-700 mb-1">
-              //          Password
-                //    </label>
-               //     <input
-                 //       type="password"
-                //        id="password"
-                  //      name="password"
-                   //     className="w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg shadow-sm
-                  //          placeholder-gray-400"
-                     //   placeholder="********"
-                     //   onChange={handleChange}
-
-                   
-             //   </div>//
-              //  <button//
-                //    type="submit"
-                 //   className="w-full bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4
-                //        rounded-lg transition duration-300"
-              //</form>  >
-                 //   Login//
-            //    </button>//
-         //  </form>//
-     // </div>//
- //   )
-//}
